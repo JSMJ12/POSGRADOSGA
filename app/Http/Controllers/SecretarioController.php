@@ -37,7 +37,6 @@ class SecretarioController extends Controller
     
     public function store(Request $request)
     {
-
         $secretario = new Secretario;
         $secretario->nombre1 = $request->input('nombre1');
         $secretario->nombre2 = $request->input('nombre2');
@@ -50,11 +49,12 @@ class SecretarioController extends Controller
         $request->validate([
             'image' => 'nullable|image|max:2048', //máximo tamaño 2MB
         ]);
+        $primeraLetra = substr($secretario->nombre1, 0, 1);
         if ($request->hasFile('image')) {
             $image = $request->file('image')->store('public/imagenes_usuarios');
             $secretario->image = url(str_replace('public/', 'storage/', $image));
         } else {
-            $secretario->image = 'https://as1.ftcdn.net/v2/jpg/05/33/06/98/1000_F_533069872_mryYSuJSR3floH4hxBUkRxeXTAqYOS0i.jpg';
+            $secretario->image = 'https://ui-avatars.com/api/?name=' . urlencode($primeraLetra);
         }
 
         $secretario->seccion_id = $request->input('seccion_id');

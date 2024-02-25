@@ -165,6 +165,11 @@ return [
         ConsoleTVs\Charts\ChartsServiceProvider::class,
         \Yajra\DataTables\DataTablesServiceProvider::class,
         \Yajra\DataTables\ButtonsServiceProvider::class,
+        App\Providers\NotificationsServiceProvider::class,
+        RealRashid\SweetAlert\SweetAlertServiceProvider::class,
+        SimpleSoftwareIO\QrCode\QrCodeServiceProvider::class,
+        Propaganistas\LaravelDisposableEmail\DisposableEmailServiceProvider::class,
+
 
         /*
          * Package Service Providers...
@@ -232,7 +237,7 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'Charts' => ConsoleTVs\Charts\Facades\Charts::class,
         'DataTables' => Yajra\DataTables\Facades\DataTables::class,
-
+        'Alert' => RealRashid\SweetAlert\Facades\Alert::class,
     ],
 
 ];

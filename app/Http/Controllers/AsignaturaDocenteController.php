@@ -15,13 +15,6 @@ class AsignaturaDocenteController extends Controller
     {
         $this->middleware('auth');
     }
-    public function index(Request $request)
-    {
-        $perPage = $request->input('perPage', 10);
-        $docentes = Docente::all();
-
-        return view('asignaturas_docentes.index', compact('docentes', 'perPage'));
-    }
 
     public function create($docente_dni)
     {
@@ -52,9 +45,6 @@ class AsignaturaDocenteController extends Controller
     {
         $asignaturas = $request->input('asignaturas');
         $docente_dni = $request->input('docente_dni');
-        if (strlen($docente_dni) === 9) {
-            $docente_dni = '0' . $docente_dni;
-        }
 
         if(is_array($asignaturas)) {
             foreach ($asignaturas as $asignatura) {

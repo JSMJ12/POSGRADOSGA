@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', 'WelcomeController@index');
+Route::get('/', 'WelcomeController@index')->name('welcome');
 //dashboar
 // Dashboard Admin
 Route::get('/dashboard/admin', 'DashboardAdminController@index')->middleware('can:dashboard_admin')->name('dashboard_admin');
@@ -25,6 +25,7 @@ Route::get('/dashboard/secretario', 'DashboardSecretarioController@index')->midd
 
 Route::get('/dashboard/alumno', 'DashboardAlumnoController@index')->middleware('can:dashboard_alumno')->name('dashboard_alumno');
 
+Route::get('/dashboard/postulante', 'DashboardPostulanteController@index')->middleware('can:dashboard_postulante')->name('dashboard_postulante');
 //Crud usuarios
 Route::resource('usuarios', 'UsuarioController')->middleware('can:dashboard_admin')->names([
     'index' => 'usuarios.index',
@@ -175,7 +176,7 @@ Route::resource('matriculas', 'MatriculaController')->parameters(['matriculas' =
 
 Route::get('/calificaciones/create/{docente_id}/{asignatura_id}/{cohorte_id}', ['as' => 'calificaciones.create1', 'uses' => 'CalificacionController@create'])->where('docente_id', '.*')->middleware('can:dashboard_docente');
 Route::get('/calificaciones/show/{alumno_id}/{docente_id}/{asignatura_id}/{cohorte_id}', ['as' => 'calificaciones.show1', 'uses' => 'CalificacionController@show'])->where('alumno_id', '.*')->where('docente_id', '.*')->middleware('can:dashboard_docente');
-Route::get('/calificaciones/edit/{docente_id}/{asignatura_id}/{cohorte_id}', ['as' => 'calificaciones.edit1', 'uses' => 'CalificacionController@edit'])->where('docente_id', '.*')->middleware('can:dashboard_docente');
+Route::get('/calificaciones/edit/{alumno_id}/{docente_id}/{asignatura_id}/{cohorte_id}', ['as' => 'calificaciones.edit1', 'uses' => 'CalificacionController@edit'])->where('docente_id', '.*')->middleware('can:dashboard_docente');
 
 Route::resource('calificaciones', 'CalificacionController')->names([
     'index' => 'calificaciones.index',
@@ -234,13 +235,21 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Auth::routes();
-
-Route::get('/home', 'HomeController@index')->name('home');
-
 Route::get('/enviar-correo', 'CorreoController@formulario')->name('formulario-correo');
 Route::post('/enviar-correo', 'CorreoController@enviarCorreo')->name('enviar-correo');
 Route::get('/cancelar-envio', 'CorreoController@cancelarEnvio')->name('cancelar-envio');
 
 
+Route::get('/exportar-excel/{docenteId}/{asignaturaId}/{cohorteId}/{aulaId}/{paraleloId}', 'DashboardDocenteController@exportarExcel')->name('exportar.excel');
 
+Route::get('/inicio', 'InicioController@redireccionarDashboard')->name('inicio');
+
+
+Route::post('mensajes', 'MessageController@store')->name('messages.store');
+Route::get('mensajes/buzon', 'MessageController@index')->name('messages.index');
+Route::delete('/mensajes/{id_message}', 'MessageController@destroy')->name('messages.destroy');
+
+Route::get('postulacion/create', 'PostulanteController@create')->name('postulantes.create');
+Route::post('postulacion', 'PostulanteController@store')->name('postulantes.store');
+Route::get('postulacion', 'PostulanteController@index')->name('postulantes.index');
+Route::delete('postulacion/{dni}', 'PostulanteController@destroy')->where('dni', '.*')->name('postulantes.destroy');

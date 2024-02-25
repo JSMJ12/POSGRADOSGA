@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -49,6 +50,7 @@ class PerfilController extends Controller
             if (Hash::check($request->input('password_actual'), $usuario->password)) {
                 // La contraseña actual es correcta
                 $usuario->password = Hash::make($request->input('password_nueva'));
+                $request->session()->flash('exito', 'Perfil actualizado con éxito');
             } else {
                 // La contraseña actual es incorrecta
                 return redirect()->back()->withErrors(['password_actual' => 'La contraseña actual es incorrecta']);
@@ -83,11 +85,11 @@ class PerfilController extends Controller
             case 'administrador':
                 $this->actualizarImagen($usuario, 'image', 'public/imagenes_administradores');
                 $usuario->save();
-                return redirect(route('admin.dashboard'))->with('exito', 'Perfil actualizado con éxito');
+                return redirect(route('dashboard_admin'))->with('exito', 'Perfil actualizado con éxito');
             case 'secretario':
                 $secretario = Secretario::where('nombre1', $usuario->name)
                     ->where('apellidop', $usuario->apellido)
-                    ->where('email_institucional', $usuario->email)
+                    ->where('email', $usuario->email)
                     ->first();
                 if ($secretario) {
                     $this->actualizarImagen($secretario, 'image', 'public/imagenes_secretarios');
@@ -96,6 +98,10 @@ class PerfilController extends Controller
                 break;
         }
 
-        return redirect(route('dashboard', ['rol' => $rol]))->with('exito', 'Perfil actualizado con éxito');
+        if ($usuario->wasChanged()) {
+            return redirect(route("dashboard_$rol"))->with('exito', 'Perfil actualizado con éxito');
+        } else {
+            return redirect()->back()->withErrors(['general' => 'No se realizaron cambios en el perfil']);
+        }
     }
 }

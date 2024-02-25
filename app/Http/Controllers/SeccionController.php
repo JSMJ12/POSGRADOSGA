@@ -25,8 +25,6 @@ class SeccionController extends Controller
         return view('secciones.create', compact('maestrias'));
     }
 
-
-
     public function store(Request $request)
     {
         $validatedData = $request->validate([
@@ -43,6 +41,11 @@ class SeccionController extends Controller
         $seccion->maestrias()->attach($maestrias);
 
         return redirect()->route('secciones.index')->with('success', 'Sección creada exitosamente');
+    }
+
+    public function edit(Seccion $seccion)
+    {
+        return view('secciones.edit', compact('seccion'));
     }
 
     public function update(Request $request, $id)

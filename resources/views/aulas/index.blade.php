@@ -18,82 +18,83 @@
                     <button class="btn btn-primary" id="crearParaleloBtn"><i class="fas fa-plus"></i>Crear Paralelo</button>
                 </div>
             </div>
-            
-            <table class="table" id="aulas">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Piso</th>
-                        <th>Código</th>
-                        <th>Paralelo</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($aulas as $aula)
-                        <tr data-bs-toggle="modal" data-bs-target="#editarAulaModal-{{ $aula->id }}">
-                            <td>{{ $aula->id }}</td>
-                            <td>{{ $aula->nombre }}</td>
-                            <td>{{ $aula->piso }}</td>
-                            <td>{{ $aula->codigo }}</td>
-                            <td>{{ $aula->paralelo->nombre }}</td>
-                            <td>
-                                <form action="{{ route('aulas.destroy', $aula->id) }}" method="POST" style="display: inline-block">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar esta aula?')">Eliminar</button>
-                                </form>
-                            </td>
+            <div class="table-responsive">
+                <table class="table table-bordered" id="aulas">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Piso</th>
+                            <th>Código</th>
+                            <th>Paralelo</th>
+                            <th>Acciones</th>
                         </tr>
-                        
-                        <!-- Modal Editar Aula -->
-                        <div class="modal fade" id="editarAulaModal-{{ $aula->id }}" tabindex="-1" aria-labelledby="editarAulaModalLabel-{{ $aula->id }}" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="editarAulaModalLabel-{{ $aula->id }}">Editar Aula</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <form action="{{ route('aulas.update', $aula->id) }}" method="POST">
-                                            @csrf
-                                            @method('PUT')
-                                        
-                                            <div class="mb-3">
-                                                <label for="nombre" class="form-label">Nombre</label>
-                                                <input type="text" class="form-control" id="nombre" name="nombre" value="{{ $aula->nombre }}">
-                                            </div>
-                                        
-                                            <div class="mb-3">
-                                                <label for="piso" class="form-label">Piso</label>
-                                                <input type="text" class="form-control" id="piso" name="piso" value="{{ $aula->piso }}">
-                                            </div>
-                                        
-                                            <div class="mb-3">
-                                                <label for="codigo" class="form-label">Código</label>
-                                                <input type="text" class="form-control" id="codigo" name="codigo" value="{{ $aula->codigo }}">
-                                            </div>
-                                        
-                                            <div class="mb-3">
-                                                <label for="paralelos_id" class="form-label">Paralelo</label>
-                                                <select class="form-control" id="paralelos_id" name="paralelos_id">
-                                                    @foreach ($paralelos as $paralelo)
-                                                        <option value="{{ $paralelo->id }}" @if ($aula->paralelos_id == $paralelo->id) selected @endif>{{ $paralelo->nombre }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        
-                                            <button type="submit" class="btn btn-primary">Guardar</button>
-                                        </form>
+                    </thead>
+                    <tbody>
+                        @foreach ($aulas as $aula)
+                            <tr data-bs-toggle="modal" data-bs-target="#editarAulaModal-{{ $aula->id }}">
+                                <td>{{ $aula->id }}</td>
+                                <td>{{ $aula->nombre }}</td>
+                                <td>{{ $aula->piso }}</td>
+                                <td>{{ $aula->codigo }}</td>
+                                <td>{{ $aula->paralelo->nombre }}</td>
+                                <td>
+                                    <form action="{{ route('aulas.destroy', $aula->id) }}" method="POST" style="display: inline-block">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar esta aula?')">Eliminar</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            
+                            <!-- Modal Editar Aula -->
+                            <div class="modal fade" id="editarAulaModal-{{ $aula->id }}" tabindex="-1" aria-labelledby="editarAulaModalLabel-{{ $aula->id }}" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="editarAulaModalLabel-{{ $aula->id }}">Editar Aula</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form action="{{ route('aulas.update', $aula->id) }}" method="POST">
+                                                @csrf
+                                                @method('PUT')
+                                            
+                                                <div class="mb-3">
+                                                    <label for="nombre" class="form-label">Nombre</label>
+                                                    <input type="text" class="form-control" id="nombre" name="nombre" value="{{ $aula->nombre }}">
+                                                </div>
+                                            
+                                                <div class="mb-3">
+                                                    <label for="piso" class="form-label">Piso</label>
+                                                    <input type="text" class="form-control" id="piso" name="piso" value="{{ $aula->piso }}">
+                                                </div>
+                                            
+                                                <div class="mb-3">
+                                                    <label for="codigo" class="form-label">Código</label>
+                                                    <input type="text" class="form-control" id="codigo" name="codigo" value="{{ $aula->codigo }}">
+                                                </div>
+                                            
+                                                <div class="mb-3">
+                                                    <label for="paralelos_id" class="form-label">Paralelo</label>
+                                                    <select class="form-control" id="paralelos_id" name="paralelos_id">
+                                                        @foreach ($paralelos as $paralelo)
+                                                            <option value="{{ $paralelo->id }}" @if ($aula->paralelos_id == $paralelo->id) selected @endif>{{ $paralelo->nombre }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            
+                                                <button type="submit" class="btn btn-primary">Guardar</button>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        
-                    @endforeach
-                </tbody>
-            </table>
+                            
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

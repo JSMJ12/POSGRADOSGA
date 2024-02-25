@@ -1,6 +1,20 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-
+    @if (session('exito'))
+    <div class="alert alert-success">
+        {{ session('exito') }}
+    </div>
+    @endif
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+    @include('partials.notifications')
 <head>
 
     {{-- Base Meta Tags --}}
@@ -101,6 +115,7 @@
         <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
         <script src="{{ asset('vendor/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script>
         <script src="{{ asset('vendor/adminlte/dist/js/adminlte.min.js') }}"></script>
+        <script src="{{ asset('vendor/sweetalert/sweetalert.all.js') }}"></script>
     @else
         <script src="{{ mix(config('adminlte.laravel_mix_js_path', 'js/app.js')) }}"></script>
     @endif
@@ -120,12 +135,13 @@
     <div class="modal fade" id="editarPerfilModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header bg-success text-white">
                     <h5 class="modal-title" id="exampleModalLabel">Editar Perfil</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
+    
                 <div class="modal-body">
                     <form method="POST" action="{{ route('perfil.actualizar') }}" enctype="multipart/form-data">
                         @csrf
@@ -133,7 +149,7 @@
     
                         <div class="form-group">
                             <label for="imagen">Imagen</label>
-                            <input id="imagen" type="file" class="form-control-file @error('imagen') is-invalid @enderror" name="image">
+                            <input id="imagen" type="file" class="form-control-file @error('imagen') is-invalid @enderror" name="imagen" accept="image/*">
                             @error('imagen')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -146,7 +162,7 @@
                             <input type="checkbox" name="cambiar-contrasena" id="cambiar-contrasena">
                         </div>
     
-                        <div class="form-group" id="contrasena-form" style="display: none;">
+                        <div class="form-group d-none" id="contrasena-form">
                             <label for="password">Contraseña Actual</label>
                             <input type="password" name="password_actual" class="form-control">
                             @error('password_actual')
@@ -154,10 +170,25 @@
                             @enderror
                         </div>
     
-                        <div class="form-group" id="nueva-contrasena-form" style="display: none;">
+                        <div class="form-group d-none" id="nueva-contrasena-form">
                             <label for="password">Nueva contraseña</label>
                             <input type="password" name="password_nueva" class="form-control">
                         </div>
+    
+                        <div class="form-group d-none" id="confirmar-contrasena-form">
+                            <label for="password_confirmation">Confirmar nueva contraseña</label>
+                            <input type="password" name="password_nueva_confirmation" class="form-control">
+                        </div>
+    
+                        @if ($errors->any())
+                            <div class="alert alert-danger">
+                                <ul>
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
     
                         <button type="submit" class="btn btn-primary">Guardar cambios</button>
                     </form>
@@ -166,25 +197,19 @@
         </div>
     </div>
     
-
     <script>
-        // Mostrar u ocultar el campo de contraseña según el estado del checkbox
+        // Mostrar u ocultar el campo de contraseña y confirmación según el estado del checkbox
         const checkbox = document.getElementById('cambiar-contrasena');
         const contrasenaForm = document.getElementById('contrasena-form');
         const nuevaContrasenaForm = document.getElementById('nueva-contrasena-form');
-        
+        const confirmarContrasenaForm = document.getElementById('confirmar-contrasena-form');
+    
         checkbox.addEventListener('change', function() {
-            if (checkbox.checked) {
-                contrasenaForm.style.display = 'block';
-                nuevaContrasenaForm.style.display = 'block';
-            } else {
-                contrasenaForm.style.display = 'none';
-                nuevaContrasenaForm.style.display = 'none';
-            }
+            contrasenaForm.classList.toggle('d-none', !checkbox.checked);
+            nuevaContrasenaForm.classList.toggle('d-none', !checkbox.checked);
+            confirmarContrasenaForm.classList.toggle('d-none', !checkbox.checked);
         });
-    </script>
-
-    <script>
+    
         // Abrir el modal cuando se hace clic en el enlace
         const editarPerfilLink = document.getElementById('editarPerfilLink');
         editarPerfilLink.addEventListener('click', function(event) {
@@ -192,8 +217,10 @@
             $('#editarPerfilModal').modal('show'); // Mostrar el modal
         });
     </script>
+    
     {{-- Custom Scripts --}}
     @yield('adminlte_js')
+    
 
 </body>
 

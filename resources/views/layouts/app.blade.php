@@ -12,6 +12,17 @@
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
 
+        <script>
+            Echo.private(`App.Models.User.${auth()->id()}`)
+                .notification((notification) => {
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Nueva notificación',
+                        text: notification.data.message.message,
+                    });
+                });
+        </script>
+
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">

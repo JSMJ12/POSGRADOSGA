@@ -3,6 +3,7 @@
         {{ session('success') }}
     </div>
 @endif
+
 @extends('adminlte::page')
 @section('title', 'Calificar')
 
@@ -31,12 +32,12 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><input type="number" step="0.01" class="form-control" name="nota_actividades" value="{{ old('nota_actividades', $nota->first()->nota_actividades) }}" max="3.0"></td>
-                                    <td><input type="number" step="0.01" class="form-control" name="nota_practicas" value="{{ old('nota_practicas', $nota->first()->nota_practicas) }}" max="3.0"></td>
-                                    <td><input type="number" step="0.01" class="form-control" name="nota_autonomo" value="{{ old('nota_autonomo', $nota->first()->nota_autonomo) }}" max="3.0"></td>
-                                    <td><input type="number" step="0.01" class="form-control" name="examen_final" value="{{ old('examen_final', $nota->first()->examen_final) }}" max="3.0"></td>
-                                    <td><input type="number" step="0.01" class="form-control" name="recuperacion" value="{{ old('recuperacion', $nota->first()->recuperacion) }}" max="3.0"></td>
-                                    <td><input type="number" step="0.01" class="form-control" name="total" value="{{ old('total', $nota->first()->total) }}"></td>
+                                    <td><input type="number" step="0.01" class="form-control nota-input" name="nota_actividades" value="{{ $nota->nota_actividades }}" max="3.0" oninput="calcularTotal(this)"></td>
+                                    <td><input type="number" step="0.01" class="form-control nota-input" name="nota_practicas" value="{{ $nota->nota_practicas }}" max="3.0" oninput="calcularTotal(this)"></td>
+                                    <td><input type="number" step="0.01" class="form-control nota-input" name="nota_autonomo" value="{{ $nota->nota_autonomo }}" max="3.0" oninput="calcularTotal(this)"></td>
+                                    <td><input type="number" step="0.01" class="form-control nota-input" name="examen_final" value="{{ $nota->examen_final }}" max="3.0" oninput="calcularTotal(this)"></td>
+                                    <td><input type="number" step="0.01" class="form-control nota-input" name="recuperacion" value="{{ $nota->recuperacion }}" max="3.0" oninput="calcularTotal(this)"></td>
+                                    <td><input type="number" step="0.01" class="form-control total-input" name="total" value="{{ $nota->total }}" readonly></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -47,4 +48,20 @@
         </div>
     </div>
 </div>
+@stop
+
+@section('js')
+    <script>
+        function calcularTotal(input) {
+            var fila = input.closest('tr');
+            var notas = fila.querySelectorAll('.nota-input');
+            var total = 0;
+            
+            notas.forEach(function(nota) {
+                total += parseFloat(nota.value) || 0;
+            });
+
+            fila.querySelector('.total-input').value = total.toFixed(2);
+        }
+    </script>
 @stop

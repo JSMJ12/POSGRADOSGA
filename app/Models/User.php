@@ -9,8 +9,10 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Permission\Traits\HasRoles;
 use App\Notifications\ResetPassword;
+use App\Message;
 
-class User extends Authenticatable 
+
+class User extends Authenticatable implements MustVerifyEmail
 {
     use Notifiable;
     protected $guard_name = 'web';
@@ -61,4 +63,14 @@ class User extends Authenticatable
     {
         $this->notify(new ResetPassword($token));
     }
+    public function sentMessages()
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+
+    public function receivedMessages()
+    {
+        return $this->hasMany(Message::class, 'receiver_id')->orderBy('created_at', 'desc');
+    }
+
 }

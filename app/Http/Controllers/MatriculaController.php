@@ -19,58 +19,43 @@ class MatriculaController extends Controller
 
     public function create($alumno_dni, $cohorte_id = null)
     {
-        // Verificar si el alumno_dni tiene 9 dígitos y agregar un cero al inicio si es necesario
-        if (strlen($alumno_dni) === 9) {
-            $alumno_dni = '0' . $alumno_dni;
-        }
-
         $alumno = Alumno::where('dni', $alumno_dni)->firstOrFail();
         $maestria = Maestria::findOrFail($alumno->maestria_id);
         $cohortes = $maestria->cohorte;
-        $cohorte = $cohorte_id ? Cohorte::findOrFail($cohorte_id) : null;
+        $cohortes = $maestria->cohorte;
+        $cohortesActivos = $cohortes->filter(function ($cohorte) {
+            return $cohorte->periodo_academico->status == 'ACTIVO';
+        });
+        $cohortes = $cohortesActivos;
         
         // Verificar si el alumno ya está matriculado en alguna asignatura de este cohorte
-        $estaMatriculado = $this->verificarMatriculacion($alumno, $cohorte);
+        $estaMatriculado = $this->verificarMatriculacion($alumno);
 
         if ($estaMatriculado) {
             return redirect()->back()->with('error', 'El alumno ya está matriculado en este cohorte.');
         }
-        return view('matriculas.create', compact('alumno', 'cohortes', 'cohorte'));
+        return view('matriculas.create', compact('alumno', 'cohortes'));
     }
 
 
-    private function verificarMatriculacion($alumno, $cohorte)
+    private function verificarMatriculacion($alumno)
     {
         $dni= $alumno->dni;
-        if (strlen($dni) === 9) {
-            $dni = '0' . $dni;
-        }
         // Verificar si el alumno está matriculado en alguna asignatura de este cohorte
         return $alumno->matriculas()->where('alumno_dni', $dni)->exists();
     }
 
     public function store(Request $request)
     {
-
-        $alumno_dni = $request->input('alumno_dni');
-        if (strlen($alumno_dni) === 9) {
-            $alumno_dni = '0' . $alumno_dni;
-        }
         $cohorte_id = $request->input('cohorte_id');
         $asignatura_ids = $request->input('asignatura_ids');
         $docente_dnis = $request->input('docente_dnis');
-        foreach ($docente_dnis as &$docente_dni) {
-            if (strlen($docente_dni) === 9) {
-                $docente_dni = '0' . $docente_dni;
-            }
-        }
-        
+        $alumno_dni = $request->input('alumno_dni');
         $cohorte = Cohorte::findOrFail($request->input('cohorte_id'));
 
         // verificar que el aforo del cohorte sea mayor a cero
         if ($cohorte->aforo > 0) {
             try {
-                // Iniciar una transacción para garantizar la integridad de los datos
                 DB::beginTransaction();
 
                 foreach ($asignatura_ids as $key => $asignatura_id) {

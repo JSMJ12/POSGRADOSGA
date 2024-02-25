@@ -15,9 +15,15 @@
 </template>
 
 <script>
-    export default {
-        mounted() {
-            console.log('Component mounted.')
-        }
-    }
+export default {
+    mounted() {
+        window.Echo.channel('new-message-channel')
+            .listen('NewMessageNotification2', (notification) => {
+                // Puedes personalizar cómo se muestra la notificación en tu aplicación Blade
+                // Aquí podrías llamar a alguna función de Blade para mostrar la notificación
+                // o simplemente actualizar el DOM según tus necesidades.
+                alert('Tienes un nuevo mensaje: ' + notification.message.message);
+            });
+    },
+};
 </script>

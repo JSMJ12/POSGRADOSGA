@@ -21,7 +21,6 @@ class UsuarioController extends Controller
         return view('usuarios.index', compact('usuarios', 'perPage'));
     }
 
-    
     public function create()
     {
         $roles = Role::all();
@@ -41,13 +40,13 @@ class UsuarioController extends Controller
         $request->validate([
             'usu_foto' => 'nullable|image|max:2048', //máximo tamaño 2MB
         ]);
-    
+        $primeraLetra = substr($usuario->name, 0, 1);
         //Almacenar la imagen
         if ($request->hasFile('usu_foto')) {
             $image = $request->file('usu_foto')->store('public/imagenes_usuarios');
             $usuario->image = url(str_replace('public/', 'storage/', $image));
         } else {
-            $usuario->image = 'https://as1.ftcdn.net/v2/jpg/05/33/06/98/1000_F_533069872_mryYSuJSR3floH4hxBUkRxeXTAqYOS0i.jpg';
+            $usuario->image = 'https://ui-avatars.com/api/?name=' . urlencode($primeraLetra);
         }
 
         $usuario->save();

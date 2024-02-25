@@ -29,8 +29,9 @@ class AlumnoController extends Controller
                 ->where('email', $user->email)
                 ->firstOrFail();
             $maestriasIds = $secretario->seccion->maestrias->pluck('id');
-            $alumnos = Alumno::whereIn('maestria_id', $maestriasIds)->paginate(10);
+            $alumnos = Alumno::whereIn('maestria_id', $maestriasIds)->get();
         }
+        
 
         return view('alumnos.index', compact('alumnos', 'perPage'));
     }
@@ -60,7 +61,6 @@ class AlumnoController extends Controller
     {
         $maestriaId = $request->input('maestria_id');
         $nuevoRegistro = Alumno::where('maestria_id', $maestriaId)->count() + 1;
-
         $alumno = new Alumno;
         $alumno->nombre1 = $request->input('nombre1');
         $alumno->nombre2 = $request->input('nombre2');
@@ -87,11 +87,12 @@ class AlumnoController extends Controller
         $request->validate([
             'image' => 'nullable|image|max:2048', //máximo tamaño 2MB
         ]);
+        $primeraLetra = substr($alumno->nombre1, 0, 1);
         if ($request->hasFile('image')) {
             $image = $request->file('image')->store('public/imagenes_usuarios');
             $alumno->image = url(str_replace('public/', 'storage/', $image));
         } else {
-            $alumno->image = 'https://as1.ftcdn.net/v2/jpg/05/33/06/98/1000_F_533069872_mryYSuJSR3floH4hxBUkRxeXTAqYOS0i.jpg';
+            $alumno->image = 'https://ui-avatars.com/api/?name=' . urlencode($primeraLetra);
         }
         // Almacenar la imagen
         $alumno->save();
@@ -113,9 +114,6 @@ class AlumnoController extends Controller
 
     public function edit($dni)
     {
-        if (strlen($dni) === 9) {
-            $dni = '0' . $dni;
-        }
         $maestrias = Maestria::where('status', 'ACTIVO')->get();
         $alumno = Alumno::where('dni', $dni)->firstOrFail();
         $provincias = ['Azuay', 'Bolívar', 'Cañar', 'Carchi', 'Chimborazo', 'Cotopaxi', 'El Oro', 'Esmeraldas', 'Galápagos', 'Guayas', 'Imbabura', 'Loja', 'Los Ríos', 'Manabí', 'Morona Santiago', 'Napo', 'Orellana', 'Pastaza', 'Pichincha', 'Santa Elena', 'Santo Domingo de los Tsáchilas', 'Sucumbíos', 'Tungurahua', 'Zamora Chinchipe'];

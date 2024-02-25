@@ -4,61 +4,69 @@
     <h1>Dashboard</h1>
 @stop
 @section('content')
+
 <div class="container">
     <div class="row">
-        <div class="col-md-12">
-            <div class="mb-2">
-                <div class="col-sm-6">
-                    <button id="mostrarGrafico" class="btn btn-primary">Mostrar Matriculados</button>
+        <div class="col-md-3">
+            <div class="info-box">
+                <span class="info-box-icon bg-info"><i class="fa fa-users"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Usuarios</span>
+                    <span class="info-box-number">{{ $totalUsuarios }}</span>
                 </div>
             </div>
         </div>
-        <div class="col-md-6 hide-by-default"> <!-- Agrega la clase hide-by-default para ocultar el gráfico y la lista de maestrías por defecto -->
+        <div class="col-md-3">
+            <div class="info-box">
+                <span class="info-box-icon bg-success"><i class="fa fa-chalkboard-teacher"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Docentes</span>
+                    <span class="info-box-number">{{ $totalDocentes }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="info-box">
+                <span class="info-box-icon bg-warning"><i class="fa fa-user-tie"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Secretarios</span>
+                    <span class="info-box-number">{{ $totalSecretarios }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="info-box">
+                <span class="info-box-icon bg-danger"><i class="fa fa-user-graduate"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Alumnos</span>
+                    <span class="info-box-number">{{ $totalAlumnos }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="info-box">
+                <span class="info-box-icon bg-primary"><i class="fa fa-graduation-cap"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Maestrías</span>
+                    <span class="info-box-number">{{ $totalMaestrias }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <!-- Ajusta el tamaño y otras propiedades según tus necesidades -->
             <div class="card">
                 <div class="card-body">
                     <canvas id="matriculadosChart" width="400" height="200"></canvas>
                 </div>
             </div>
         </div>
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-body">
-                    <table class="table" id='alumnos'>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Foto</th>
-                                <th>Nombre Completo</th>
-                                <th>Cedula/Pasaporte</th>
-                                <th>Maestria</th>
-                                <th>Email Institucional</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($alumnos as $alumno)
-                            <tr>
-                                <td>{{ $alumno->dni }}</td>
-                                <td class="text-center">
-                                    <img src="{{ asset($alumno->image) }}" alt="Imagen de {{ $alumno->name }}" style="max-width: 60px; border-radius: 50%;">
-                                </td>
-                                <td>
-                                    {{ $alumno->nombre1 }}<br>
-                                    {{ $alumno->nombre2 }}<br>
-                                    {{ $alumno->apellidop }}<br>
-                                    {{ $alumno->apellidom }}
-                                </td>
-                                <td>{{ $alumno->dni }}</td>
-                                <td>{{ $alumno->maestria->nombre }}</td>
-                                <td>{{ $alumno->email_institucional }}</td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+        <!-- Agrega más secciones para otras entidades según sea necesario -->
     </div>
 </div>
+
 @endsection
 
 @section('css')
@@ -82,17 +90,6 @@
 
 @section('js')
     <script>
-        $('#alumnos').DataTable({
-            lengthMenu: [5, 10, 15, 20, 40, 45, 50, 100], 
-            pageLength: {{ $perPage }},
-            responsive: true, 
-            colReorder: true,
-            keys: true,
-            autoFill: true, 
-            language: {
-                url: "https://cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json"
-            }
-        });
 
        // Datos para el gráfico de matriculados por maestría
         var matriculadosIDs = {!! $matriculadosPorMaestria->pluck('id') !!};
@@ -104,8 +101,21 @@
             datasets: [{
                 label: 'Cantidad de Alumnos Matriculados',
                 data: matriculadosValues,
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)', // Color para la primera barra
+                    'rgba(54, 162, 235, 0.2)', // Color para la segunda barra
+                    'rgba(255, 206, 86, 0.2)', // Color para la tercera barra
+                    'rgba(75, 192, 192, 0.2)', // Color para la cuarta barra
+                    'rgba(153, 102, 255, 0.2)', // Color para la quinta barra
+                    // Puedes agregar más colores según sea necesario
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                ],
                 borderWidth: 1
             }]
         };
@@ -135,22 +145,5 @@
             options: matriculadosOptions
         });
 
-        $(document).ready(function () {
-            var graficoVisible = false; // Variable para rastrear si el gráfico y la lista están visibles
-
-            $('#mostrarGrafico').click(function () {
-                if (graficoVisible) {
-                    // Si el gráfico y la lista están visibles, los ocultamos
-                    $('.hide-by-default').hide();
-                    graficoVisible = false;
-                    $(this).text('Mostrar Matriculados'); // Cambiar el texto del botón
-                } else {
-                    // Si el gráfico y la lista están ocultos, los mostramos
-                    $('.hide-by-default').show();
-                    graficoVisible = true;
-                    $(this).text('Ocultar Matriculados'); // Cambiar el texto del botón
-                }
-            });
-        });
     </script>
 @stop

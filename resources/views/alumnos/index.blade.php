@@ -26,85 +26,101 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <table class="table" id='alumnos'>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Foto</th>
-                                <th>Nombre Completo</th>
-                                <th>DNI</th>
-                                <th>Maestria</th>
-                                <th>Email Institucional</th>
-                                <th>Sexo</th>
-                                <th>Matriculas</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($alumnos as $alumno)
-                            <tr>
-                                <td>{{ $alumno->dni }}</td>
-                                <td class="text-center">
-                                    <img src="{{ asset($alumno->image) }}" alt="Imagen de {{ $alumno->name }}" style="max-width: 60px; border-radius: 50%;">
-                                </td>
-                                <td>
-                                    {{ $alumno->nombre1 }}<br>
-                                    {{ $alumno->nombre2 }}<br>
-                                    {{ $alumno->apellidop }}<br>
-                                    {{ $alumno->apellidom }}
-                                </td>
-                                <td>{{ $alumno->dni }}</td>
-                                <td>{{ $alumno->maestria->nombre }}</td>
-                                <td>{{ $alumno->email_institucional }}</td>
-                                <td>{{ $alumno->sexo }}</td>
-                                <td>
-                                    <!-- Botón para abrir el modal -->
-                                    <button type="button" class="btn btn-outline-info btn-sm" data-toggle="modal" data-target="#matriculasModal{{ $alumno->dni }}" title="Ver Matrícula">
-                                        <i class="fas fa-eye"></i> <!-- Icono de ojo -->
-                                    </button>
-                                </td>
-                                <td>
-                                    <div class="d-flex justify-content-between">
-                                        @can('dashboard_admin')
-                                            <div>
-                                                <a href="{{ route('alumnos.edit', $alumno->dni) }}" class="btn btn-outline-primary btn-sm" title="Editar">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id='alumnos'>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Foto</th>
+                                    <th>Nombre Completo</th>
+                                    <th>DNI</th>
+                                    <th>Maestria</th>
+                                    <th>Email Institucional</th>
+                                    <th>Sexo</th>
+                                    <th>Matriculas</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($alumnos as $alumno)
+                                <tr>
+                                    <td>{{ $alumno->dni }}</td>
+                                    <td class="text-center">
+                                        <img src="{{ asset($alumno->image) }}" alt="Imagen de {{ $alumno->name }}" style="max-width: 60px; border-radius: 50%;">
+                                    </td>
+                                    <td>
+                                        {{ $alumno->nombre1 }}<br>
+                                        {{ $alumno->nombre2 }}<br>
+                                        {{ $alumno->apellidop }}<br>
+                                        {{ $alumno->apellidom }}
+                                    </td>
+                                    <td>{{ $alumno->dni }}</td>
+                                    <td>{{ $alumno->maestria->nombre }}</td>
+                                    <td>{{ $alumno->email_institucional }}</td>
+                                    <td>{{ $alumno->sexo }}</td>
+                                    <td>
+                                        <!-- Botón para abrir el modal -->
+                                        <button type="button" class="btn btn-outline-info btn-sm" data-toggle="modal" data-target="#matriculasModal{{ $alumno->dni }}" title="Ver Matrícula">
+                                            <i class="fas fa-eye"></i> <!-- Icono de ojo -->
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex flex-column align-items-center text-center">
+                                            @can('dashboard_admin')
+                                                <div class="mb-2">
+                                                    <a href="{{ route('alumnos.edit', $alumno->dni) }}" class="btn btn-outline-primary btn-sm" title="Editar">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                </div>
+                                            @endcan
+                                    
+                                            <div class="d-flex flex-row">
+                                                @if ($alumno->maestria->cohorte->count() > 0)
+                                                    <div class="mr-2">
+                                                        @php
+                                                            $alumnoDNI = $alumno->dni;
+                                                        @endphp
+                                                        <a href="{{ url('/matriculas/create', $alumnoDNI) }}" class="btn btn-outline-success btn-sm" title="Matricular">
+                                                            <i class="fas fa-plus-circle"></i>
+                                                        </a>
+                                                    </div>
+                                                @endif
+                                    
+                                                <div class="align-self-center mb-2">
+                                                    @if ($alumno->notas->count() > 0 && $alumno->maestria->asignaturas->count() > 0 && $alumno->notas->count() == $alumno->maestria->asignaturas->count())
+                                                        <a href="{{ route('record.show', $alumno->dni) }}" class="btn btn-outline-warning btn-sm" title="Record Académico">
+                                                            <i class="fas fa-file-alt"></i>
+                                                        </a>
+                                                    @endif
+                                                </div>
+                                    
+                                                @if ($alumno->notas->count() > 0 && $alumno->maestria->asignaturas->count() > 0 && $alumno->notas->count() == $alumno->maestria->asignaturas->count())
+                                                    <div class="ml-2">
+                                                        <a href="#" class="btn btn-outline-danger btn-sm" title="Titulación">
+                                                            <!-- Agrega aquí el icono adecuado para la titulación -->
+                                                            <i class="fas fa-graduation-cap"></i>
+                                                        </a>
+                                                    </div>
+                                                @endif
                                             </div>
-                                        @endcan
-                                        @if ($alumno->maestria->cohorte->count() > 0)
-                                            <div>
-                                                @php
-                                                $alumnoDNI = $alumno->dni;
-                                                @endphp
-                                                <a href="{{ url('/matriculas/create', $alumnoDNI) }}" class="btn btn-outline-success btn-sm" title="Matricular">
-                                                    <i class="fas fa-plus-circle"></i>
-                                                </a>
-                                            </div>
-                                        @endif
-                                        @if ($alumno->notas->count() > 0)
-                                            <div>
-                                                <a href="{{ route('record.show', $alumno->dni) }}" class="btn btn-outline-warning btn-sm" title="Record Académico">
-                                                    <i class="fas fa-file-alt"></i>
-                                                </a>
-                                            </div>
-                                        @endif
-                                        @can('dashboard_admin')
-                                            <div>
-                                                @php
-                                                $alumnoDNI = $alumno->dni;
-                                                @endphp
-                                                <a href="{{ url('/notas/create', $alumnoDNI) }}" class="btn btn-outline-info btn-sm" title="Calificar">
-                                                    <i class="fas fa-pencil-alt"></i>
-                                                </a>
-                                            </div>
-                                        @endcan
-                                    </div>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                                    
+                                            @can('dashboard_admin')
+                                                <div class="mt-2">
+                                                    @php
+                                                        $alumnoDNI = $alumno->dni;
+                                                    @endphp
+                                                    <a href="{{ url('/notas/create', $alumnoDNI) }}" class="btn btn-outline-info btn-sm" title="Calificar">
+                                                        <i class="fas fa-pencil-alt"></i>
+                                                    </a>
+                                                </div>
+                                            @endcan
+                                        </div>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -138,7 +154,7 @@
                             @foreach($alumno->matriculas as $matricula)
                                 <tr>
                                     <td>{{ $matricula->asignatura->nombre }}</td>
-                                    <td>{{ $matricula->docente->nombre1 }} {{ $matricula->docente->apellidop }} {{ $matricula->docente->apellido2 }}</td>
+                                    <td>{{ $matricula->docente ? $matricula->docente->nombre1 : 'Nombre no disponible' }} {{ $matricula->docente ? $matricula->docente->apellidop : 'Apellido Paterno no disponible' }} {{ $matricula->docente ? $matricula->docente->apellido2 : 'Apellido Materno no disponible' }}</td>
                                     <td>{{ $matricula->cohorte->nombre }}</td>
                                     <td>{{ $matricula->cohorte->aula->nombre }}</td>
                                     <td>{{ $matricula->cohorte->aula->paralelo->nombre }}</td>

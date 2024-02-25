@@ -11,7 +11,8 @@
                 <div class="card-header">{{ __('Editar Cohorte') }}</div>
 
                 <div class="card-body">
-                    <form method="POST" action="{{ route('cohorte.update', $cohorte->id) }}">
+                    <form method="POST" action="{{ route('cohortes.update', $cohorte->id) }}">
+
                         @csrf
                         @method('PUT')
                         <div class="form-group">

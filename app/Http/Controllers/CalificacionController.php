@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Nota;
 use App\Models\Matricula;
 use App\Models\Docente;
+use App\Models\Cohorte;
 class CalificacionController extends Controller
 {
     public function __construct()
@@ -14,9 +15,6 @@ class CalificacionController extends Controller
     }
     public function create($docente_dni, $asignatura_id, $cohorte_id)
     {
-        if (strlen($docente_dni) === 9) {
-            $docente_dni = '0' . $docente_dni;
-        }
         $matriculas = Matricula::where('docente_dni', $docente_dni)
                                 ->where('asignatura_id', $asignatura_id)
                                 ->where('cohorte_id', $cohorte_id)
@@ -30,17 +28,9 @@ class CalificacionController extends Controller
     public function store(Request $request)
     {
         $docenteDni = $request->input('docente_dni');
-        if (strlen($docenteDni) === 9) {
-            $docenteDni = '0' . $docenteDni;
-        }
         $asignaturaId = $request->input('asignatura_id');
         $cohorteId = $request->input('cohorte_id');
         $alumnoDnis = $request->input('alumno_dni');
-        foreach ($alumnoDnis as &$alumno_dni) {
-            if (strlen($alumno_dni) === 9) {
-                $alumno_dni = '0' . $alumno_dni;
-            }
-        }
         $notasActividades = $request->input('nota_actividades');
         $notasPracticas = $request->input('nota_practicas');
         $notasAutonomo = $request->input('nota_autonomo');
@@ -75,9 +65,6 @@ class CalificacionController extends Controller
                         ->first();
         // 
         $docente_dni = $docente->dni;
-        if (strlen($docente_dni) === 9) {
-            $docente_dni = '0' . $docente_dni;
-        }
         $asignaturas = $docente->asignaturas;
 
         // Obtener los alumnos matriculados en las asignaturas del docente
@@ -90,14 +77,23 @@ class CalificacionController extends Controller
             }
         }
                     
-        return view('dashboard.docente', compact('docente', 'asignaturas', 'alumnos', 'docente_dni'));
+        return redirect()->route('dashboard_docente')->with('success', 'Calificaciones almacenadas exitosamente');
     }
-    public function edit($id)
+    public function edit($alumno_dni, $docente_dni, $asignatura_id, $cohorte_id)
     {
-        $nota = Nota::find($id);
+        $nota = Nota::where('cohorte_id', $cohorte_id)
+                    ->where('asignatura_id', $asignatura_id)
+                    ->where('docente_dni', $docente_dni)
+                    ->where('alumno_dni', $alumno_dni)
+                    ->first();
 
+        if (!$nota) {
+            // Aquí puedes manejar la situación en la que no se encuentre la nota
+            abort(404, 'Nota no encontrada');
+        }
         return view('calificaciones.edit', compact('nota'));
     }
+
     public function update(Request $request, $id)
     {
         $nota = Nota::findOrFail($id);
@@ -114,19 +110,15 @@ class CalificacionController extends Controller
 
     public function show($alumno_dni, $docente_dni, $asignatura_id, $cohorte_id)
     {
-        if (strlen($alumno_dni) === 9) {
-            $alumno_dni = '0' . $alumno_dni;
-        }
-        
-        if (strlen($docente_dni) === 9) {
-            $docente_dni = '0' . $docente_dni;
-        }
         $notas = Nota::where('cohorte_id', $cohorte_id)
                     ->where('asignatura_id', $asignatura_id)
                     ->where('docente_dni', $docente_dni)
                     ->where('alumno_dni', $alumno_dni)
                     ->get();
-
-        return view('calificaciones.show', compact('notas'));
+        
+        $cohorte = Cohorte::where('id', $cohorte_id)->first();
+        $fechaFinCohorte = $cohorte->periodo_academico->fecha_fin;
+        $fechaLimite = $fechaFinCohorte->addWeek();
+        return view('calificaciones.show', compact('notas', 'fechaLimite'));
     }
 }

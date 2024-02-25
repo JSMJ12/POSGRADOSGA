@@ -18,6 +18,7 @@ class RoleSeeder extends Seeder
         $role2 = Role::create(['name' => 'Docente']);
         $role3 = Role::create(['name' => 'Secretario']);
         $role4 = Role::create(['name' => 'Alumno']);
+        $role5 = Role::create(['name' => 'Postulante']);
         //Administrador
         $permission1 = Permission::create(['name' => 'dashboard_admin'])->syncRoles([$role1]);
         $permission2 = Permission::create(['name' => 'admin.usuarios.disable'])->syncRoles([$role1]);
@@ -44,5 +45,8 @@ class RoleSeeder extends Seeder
 
         //Alumno
         $permission1 = Permission::create(['name' => 'dashboard_alumno'])->syncRoles([$role1,$role4 ]);
+
+        //Postulante
+        $permission1 = Permission::create(['name' => 'dashboard_postulante'])->syncRoles([$role5 ]);
     }
 }

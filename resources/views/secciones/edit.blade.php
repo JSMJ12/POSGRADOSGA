@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 @section('title', 'Crear Secciones')
 @section('content_header')
-    <h1>Crear Secciones</h1>
+    <h1>Editar Seccion</h1>
 @stop
 @section('content')
 <div class="container">

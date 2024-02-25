@@ -37,7 +37,11 @@
                                     <td>{{ $nota->recuperacion }}</td>
                                     <td>{{ $nota->total }}</td>
                                     <td>
-                                        <a href="{{ route('calificaciones.edit', $nota->id) }}" class="btn btn-sm btn-primary">Editar</a>
+                                        @if ($fechaLimite >= now())
+                                            <a href="{{ route('calificaciones.edit1', [$nota->alumno_dni, $nota->docente_dni, $nota->asignatura_id, $nota->cohorte_id]) }}" class="btn btn-sm btn-primary">Editar</a>
+                                        @else
+                                            <span class="text-danger">No se puede editar las notas después de la fecha límite.</span>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

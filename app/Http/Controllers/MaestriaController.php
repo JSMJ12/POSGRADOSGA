@@ -29,7 +29,10 @@ class MaestriaController extends Controller
     {   
         $maestria = new Maestria;
         $maestria->nombre = $request->input('nombre');
-        $maestria->coordinador = $request->input('coordinador'); // Agrega esta línea para asignar el coordinador
+        $maestria->coordinador = $request->input('coordinador');
+        $maestria->precio_total = $request->input('precio_total');
+        $maestria->fecha_inicio = $request->input('fecha_inicio');
+        $maestria->fecha_fin = $request->input('fecha_fin');
         $maestria->save();
 
         return redirect()->route('maestrias.index')->with('success', 'Maestría creada exitosamente.');
@@ -43,7 +46,11 @@ class MaestriaController extends Controller
 
     public function update(Request $request, Maestria $maestria)
     {
+        $maestria->nombre = $request->input('nombre');
         $maestria->coordinador = $request->input('coordinador');
+        $maestria->precio_total = $request->input('precio_total');
+        $maestria->fecha_inicio = $request->input('fecha_inicio');
+        $maestria->fecha_fin = $request->input('fecha_fin');
         $maestria->save();
 
         return redirect()->route('maestrias.index')->with('success', 'Maestria actualizada exitosamente.');

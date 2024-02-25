@@ -112,8 +112,8 @@ return [
             'path' => 'vendor/adminlte/dist/img/themas.webp',
             'alt' => 'AdminLTE Preloader Image',
             'effect' => 'animation__shake',
-            'width' => 60,
-            'height' => 60,
+            'width' => 150,
+            'height' => 100,
         ],
     ],
 
@@ -153,7 +153,7 @@ return [
     'layout_fixed_sidebar' => true,
     'layout_fixed_navbar' => true,
     'layout_fixed_footer' => null,
-    'layout_dark_mode' => null,
+    'layout_dark_mode' => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -211,7 +211,7 @@ return [
     */
 
     'sidebar_mini' => 'lg',
-    'sidebar_collapse' => false,
+    'sidebar_collapse' => true,
     'sidebar_collapse_auto_size' => false,
     'sidebar_collapse_remember' => false,
     'sidebar_collapse_remember_no_transition' => true,
@@ -300,13 +300,23 @@ return [
             'can' => ['dashboard_docente', 'dashboard_alumno',  'dashboard_secretario']
         ],
         [
-            'type'         => 'navbar-search',
-            'text'         => 'Buscar',
+            'text' => 'Inicio',
+            'url' => '/inicio',
+            'icon' => 'fas fa-home',
             'topnav_right' => true,
+            'can' => ['dashboard_docente', 'dashboard_alumno',  'dashboard_secretario']
         ],
         [
-            'type'         => 'fullscreen-widget',
+            'text' => 'Buzon',
+            'route'  => 'messages.index',
+            'icon' => 'fas fa-envelope',
             'topnav_right' => true,
+            'can' => ['dashboard_docente', 'dashboard_alumno',  'dashboard_secretario']
+        ],
+        
+        [
+            'type'         => 'darkmode-widget',
+            'topnav_right' => true, // Or "topnav => true" to place on the left.
         ],
 
         // Sidebar items:
@@ -333,6 +343,12 @@ return [
             'text' => 'Docentes',
             'route'  => 'docentes.index',
             'icon' => 'fas fa-fw fa-chalkboard-teacher',
+            'can' => 'secretarios.crear'
+        ],
+        [
+            'text' => 'Postulantes',
+            'icon' => 'fas fa-book-reader',
+            'route'  => 'postulantes.index',
             'can' => 'secretarios.crear'
         ],
         [
@@ -435,7 +451,7 @@ return [
             ],
         ],
         'Select2' => [
-            'active' => false,
+            'active' => true,
             'files' => [
                 [
                     'type' => 'js',
@@ -455,7 +471,7 @@ return [
                 [
                     'type' => 'js',
                     'asset' => false,
-                    'location' => '//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.0/Chart.bundle.min.js',
+                    'location' => '//cdn.jsdelivr.net/npm/chart.js',
                 ],
             ],
         ],

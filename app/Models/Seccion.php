@@ -13,7 +13,7 @@ class Seccion extends Model
 
     public function maestrias()
     {
-        return $this->belongsToMany(Maestria::class);
+        return $this->belongsToMany(Maestria::class, 'maestria_seccion', 'seccion_id', 'maestria_id');
     }
 
     public function secretarios()

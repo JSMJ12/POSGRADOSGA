@@ -17,11 +17,31 @@ class CohorteController extends Controller
     }
     public function index(Request $request)
     {
+        $user = auth()->user();
         $perPage = $request->input('perPage', 10);
-        $cohortes = Cohorte::with(['maestria', 'periodo_academico', 'aula'])->get();
+
+        if ($user->hasRole('Administrador')) {
+            // Si el usuario es administrador, muestra todos los cohortes
+            $cohortes = Cohorte::with(['maestria', 'periodo_academico', 'aula'])->paginate($perPage);
+        } else {
+            // Si el usuario no es administrador, asume que es un secretario
+            $secretario = Secretario::where('nombre1', $user->name)
+                ->where('apellidop', $user->apellido)
+                ->where('email', $user->email)
+                ->firstOrFail();
+
+            // Obtén los identificadores de las maestrías asociadas a la sección del secretario
+            $maestriasIds = $secretario->seccion->maestrias->pluck('id');
+
+            // Filtra los cohortes que pertenecen a esas maestrías
+            $cohortes = Cohorte::with(['maestria', 'periodo_academico', 'aula'])
+                ->whereIn('maestria_id', $maestriasIds)
+                ->paginate($perPage);
+        }
 
         return view('cohortes.index', compact('cohortes', 'perPage'));
     }
+
 
     public function create()
     {
@@ -69,16 +89,17 @@ class CohorteController extends Controller
         return redirect()->route('cohortes.index')->with('success', 'La cohorte ha sido creada exitosamente.');
     }
 
-    public function edit(Cohorte $cohorte)
+    public function edit($cohorte)
     {
+        $cohorte = Cohorte::where('id', $cohorte)->firstOrFail();
         $maestrias = Maestria::all();
-        $periodos_academicos = all();
+        $periodos_academicos = PeriodoAcademico::all();
         $aulas = Aula::all();
 
         return view('cohortes.edit', compact('cohorte', 'maestrias', 'periodos_academicos', 'aulas'));
     }
 
-    public function update(Request $request, Cohorte $cohorte)
+    public function update(Request $request, $cohorte)
     {
         $request->validate([
             'nombre' => 'required|string',
@@ -89,19 +110,23 @@ class CohorteController extends Controller
             'modalidad' => 'required|in:presencial,hibrida,virtual',
         ]);
 
-        $cohorte->update([
-            'nombre' => $request->input('nombre'),
-            'maestria_id' => $request->input('maestria_id'),
-            'periodo_academico_id' => $request->input('periodo_academico_id'),
-            'aula_id' => $request->input('aula_id'),
-            'aforo' => $request->input('aforo'),
-            'modalidad' => $request->input('modalidad'),
-        ]);
+        $cohorte = Cohorte::where('id', $cohorte)->firstOrFail();
+
+        $cohorte->nombre = $request->input('nombre');
+        $cohorte->maestria_id = $request->input('maestria_id');
+        $cohorte->periodo_academico_id = $request->input('periodo_academico_id');
+        $cohorte->aula_id = $request->input('aula_id');
+        $cohorte->aforo = $request->input('aforo');
+        $cohorte->modalidad = $request->input('modalidad');
+
+        $cohorte->save();
 
         return redirect()->route('cohortes.index')->with('success', 'La cohorte ha sido actualizada exitosamente.');
     }
-    public function destroy(Cohorte $cohorte)
+
+    public function destroy($cohorte)
     {
+        $cohorte = Cohorte::where('id', $cohorte)->firstOrFail();
         try {
             $cohorte->delete();
             return redirect()->route('cohortes.index')->with('success', 'El cohorte ha sido eliminado exitosamente.');

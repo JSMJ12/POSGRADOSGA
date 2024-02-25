@@ -60,4 +60,8 @@ class ResetPassword extends Notification
             //
         ];
     }
+    public function toMailUsing($notifiable, $recipient)
+    {
+        return parent::toMailUsing($notifiable, $recipient)->introLines([]);
+    }
 }

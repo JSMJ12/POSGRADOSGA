@@ -39,7 +39,7 @@
             width: 74px;
             height: 73px;
             position: absolute;
-            top: 10px;
+            top: 30px;
             right: 10px;
         }
         .university-name {
@@ -92,6 +92,11 @@
         .student-info td {
             text-align: center; /* Centrar el contenido en las celdas */
         }
+        #qr-code {
+            position: absolute;
+            bottom: 30px;
+            right: 5px;
+        }
     </style>
 </head>
 <body>
@@ -120,10 +125,10 @@
                 <tr>
                     <!-- Encabezados de la tabla -->
                     <th>Alumno</th>
-                    <th>DNI</th>
+                    <th>Ced./Pas</th>
                     <th>Actividades de Aprendizaje (2.5)</th>
-                    <th>Componentes de Prácticas de Aplicación y Experimentación (2.5)</th>
-                    <th>Componente de Aprendizaje Autónomo (2.5)</th>
+                    <th>Prácticas de Apli. y Exp. (2.5)</th>
+                    <th>Aprendizaje Autónomo (2.5)</th>
                     <th>Examen Final (2.5)</th>
                     <th>Recuperación</th>
                     <th>Total</th>
@@ -141,7 +146,7 @@
                         </td>
                         <td>{{ $alumno->dni }}</td>
                         @foreach ($alumno->notas as $nota)
-                            @if ($nota->asignatura_id == $asignatura->id && $nota->alumno_id == $alumno->id && $nota->docente_id == $docente->id)
+                            @if ($nota->asignatura_id == $asignatura->id && $nota->alumno_id == $alumno->id && $nota->docente_dni == $docente->dni)
                                 <td>{{ $nota->nota_actividades }}</td>
                                 <td>{{ $nota->nota_practicas }}</td>
                                 <td>{{ $nota->nota_autonomo }}</td>
@@ -170,6 +175,9 @@
                 <!-- Espacio para el sello de la institución (puedes agregar una imagen o espacio en blanco) -->
             </div>
             <div style="clear: both;"></div>
+        </div>
+        <div id="qr-code">
+            <img src="data:image/png;base64,{{ base64_encode($qrCode) }}" alt="Código QR">
         </div>
     </div>
 </body>

@@ -38,7 +38,7 @@
             width: 74px;
             height: 73px;
             position: absolute;
-            top: 10px;
+            top: 30px;
             right: 10px;
         }
         .university-name {
@@ -86,6 +86,11 @@
             text-align: right;
             margin-top: 10px;
         }
+        #qr-code {
+            position: absolute;
+            bottom: 50px;
+            right: 5px;
+        }
     </style>
 </head>
 <body>
@@ -101,7 +106,7 @@
         <p class="certificate-title">CERTIFICA</p>
         <p class="certificate-details">Que de acuerdo a los registros que reposan en la Secretaría Académica de
              la Coordinación de la {{ $alumno->maestria->nombre }} de la Universidad Estatal del Sur de Manabí, se desarrolló al {{$numeroRomano}} PROGRAMA 
-             DE {{ $alumno->maestria->nombre }}, mismo que tuvo la duración de un año, inició sus actividades 
+             DE {{ $alumno->maestria->nombre }}, inició sus actividades 
              académicas el {{ \Carbon\Carbon::parse($periodo_academico->fecha_inicio)->locale('es')->isoFormat('DD [de] MMMM [de] YYYY') }} y culminó 
              el {{ \Carbon\Carbon::parse($periodo_academico->fecha_fin)->locale('es')->isoFormat('DD [de] MMMM [de] YYYY') }}, con una modalidad {{ $cohorte->modalidad }}, con un total de {{ $totalCreditos }} horas, según plan curricular.</p>
         <p class="certificate-details">En los archivos de esta maestría consta: {{ $alumno->apellidop }} {{ $alumno->apellidom }} {{ $alumno->nombre1 }} {{ $alumno->nombre2 }}, con número de Matrícula Nº  {{ $alumno->registro }}, quien aprobó todos los módulos contemplados en este programa, de acuerdo al siguiente detalle:</p>
@@ -163,6 +168,9 @@
                 </tr>
             </tbody>
         </table>
+        <div id="qr-code">
+            <img src="data:image/png;base64,{{ base64_encode($qrCode) }}" alt="Código QR">
+        </div>
     </div>
 </body>
 </html>

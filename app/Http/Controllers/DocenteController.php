@@ -29,7 +29,6 @@ class DocenteController extends Controller
     
     public function store(Request $request)
     {
-
         $docente = new Docente;
         $docente->nombre1 = $request->input('nombre1');
         $docente->nombre2 = $request->input('nombre2');
@@ -43,11 +42,12 @@ class DocenteController extends Controller
         $request->validate([
             'docen_foto' => 'nullable|image|max:2048', //máximo tamaño 2MB
         ]);
+        $primeraLetra = substr($docente->nombre1, 0, 1);
         if ($request->hasFile('docen_foto')) {
             $image = $request->file('docen_foto')->store('public/imagenes_usuarios');
             $docente->image = url(str_replace('public/', 'storage/', $image));
         } else {
-            $docente->image = 'https://as1.ftcdn.net/v2/jpg/05/33/06/98/1000_F_533069872_mryYSuJSR3floH4hxBUkRxeXTAqYOS0i.jpg';
+            $docente->image = 'https://ui-avatars.com/api/?name=' . urlencode($primeraLetra);
         }
         //Almacenar la imagen
         $docente->save();

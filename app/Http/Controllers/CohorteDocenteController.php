@@ -20,14 +20,10 @@ class CohorteDocenteController extends Controller
         $docente = Docente::where('dni', $docente_dni)->firstOrFail();
         $asignaturas = $docente->asignaturas;
         
-
-        // Obtén los IDs de los cohortes ya asignados al docente
-        $cohortesAsignados = $docente->cohortes->pluck('id')->all();
-
         if ($asignatura_id) {
             $asignatura = Asignatura::findOrFail($asignatura_id);
             $maestria = Maestria::findOrFail($asignatura->maestria_id);
-            $cohortes = $maestria->cohorte->whereNotIn('id', $cohortesAsignados);
+            $cohortes = $maestria->cohorte;
 
             $maestriaCohortes = [
                 [
@@ -41,7 +37,7 @@ class CohorteDocenteController extends Controller
 
             foreach ($asignaturas as $asignatura) {
                 $maestria = Maestria::findOrFail($asignatura->maestria_id);
-                $cohortes = $maestria->cohorte->whereNotIn('id', $cohortesAsignados);
+                $cohortes = $maestria->cohorte;
                 $maestriaCohortes[] = [
                     'asignatura' => $asignatura,
                     'maestria' => $maestria,
@@ -55,18 +51,17 @@ class CohorteDocenteController extends Controller
     public function store(Request $request)
     {
         $cohorteIds = $request->input('cohorte_id', []);
-        $docenteDni = $request->input('docente_dni');
-        if (!str_starts_with($docenteDni, '0')) {
-            $docenteDni = '0' . $docenteDni;
-        }        
+        $docenteDni = $request->input('docente_dni');      
         $asignaturaId = $request->input('asignatura_id');
 
         foreach ($cohorteIds as $cohorteId) {
-            $asignacion = new CohorteDocente;
-            $asignacion->cohort_id = $cohorteId;
-            $asignacion->docente_dni = $docenteDni;
-            $asignacion->asignatura_id = $asignaturaId;
-            $asignacion->save();
+            CohorteDocente::updateOrCreate(
+                [
+                    'cohort_id' => $cohorteId,
+                    'docente_dni' => $docenteDni,
+                    'asignatura_id' => $asignaturaId,
+                ],
+            );
         }
 
         return redirect()->route('docentes.index');

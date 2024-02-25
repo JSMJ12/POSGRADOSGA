@@ -11,6 +11,10 @@ use App\Models\Maestria;
 
 use App\Models\Secretario;
 
+use App\Models\Docente;
+
+use App\Models\User;
+
 
 class DashboardAdminController extends Controller
 {
@@ -26,8 +30,14 @@ class DashboardAdminController extends Controller
         $alumnos = Alumno::with('maestria')->get();
         // Obtener datos para el gráfico de matriculados por maestría
         $matriculadosPorMaestria = Maestria::withCount('alumnos')->get();
+        $totalMaestrias = Maestria::count();
+        $totalDocentes = Docente::count();
+        $totalSecretarios = Secretario::count();
+        $totalUsuarios = User::count();
+        $totalAlumnos = Alumno::count();
 
-        return view('dashboard.administrador', compact('alumnos', 'matriculadosPorMaestria', 'perPage'));
+        return view('dashboard.administrador', 
+        compact('alumnos', 'matriculadosPorMaestria', 'totalAlumnos', 'perPage', 'totalUsuarios', 'totalMaestrias', 'totalSecretarios', 'totalDocentes'));
     }
 
 }
