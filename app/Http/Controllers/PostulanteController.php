@@ -94,17 +94,10 @@ class PostulanteController extends Controller
     {
         
         Storage::makeDirectory('public/postulantes/imagen');
-        Storage::makeDirectory('public/postulantes/pdf');
         // Subir la imagen
         if ($request->hasFile('imagen')) {
             $imagenPath = $request->file('imagen')->store('postulantes/imagen', 'public');
         }
-
-        // Subir archivos PDF
-        $pdfCedulaPath = $request->file('pdf_cedula')->store('postulantes/pdf', 'public');
-        $pdfPapelVotacionPath = $request->file('pdf_papelvotacion')->store('postulantes/pdf', 'public');
-        $pdfTituloUniversidadPath = $request->file('pdf_titulouniversidad')->store('postulantes/pdf', 'public');
-        $pdfConadisPath = $request->hasFile('pdf_conadis') ? $request->file('pdf_conadis')->store('postulantes/pdf', 'public') : null;
         // Crear el postulante con los datos y rutas de los archivos
         Postulante::create([
             'dni' => $request->input('dni'),
@@ -137,10 +130,6 @@ class PostulanteController extends Controller
 
             // Nuevos campos
             'imagen' => $imagenPath ?? null,
-            'pdf_cedula' => $pdfCedulaPath,
-            'pdf_papelvotacion' => $pdfPapelVotacionPath,
-            'pdf_titulouniversidad' => $pdfTituloUniversidadPath,
-            'pdf_conadis' => $pdfConadisPath ?? null,
         ]);
         $usuario = new User;
         $usuario->name = $request->input('nombre1');

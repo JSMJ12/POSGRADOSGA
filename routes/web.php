@@ -26,6 +26,7 @@ Route::get('/dashboard/secretario', 'DashboardSecretarioController@index')->midd
 Route::get('/dashboard/alumno', 'DashboardAlumnoController@index')->middleware('can:dashboard_alumno')->name('dashboard_alumno');
 
 Route::get('/dashboard/postulante', 'DashboardPostulanteController@index')->middleware('can:dashboard_postulante')->name('dashboard_postulante');
+Route::post('postulante/store', 'DashboardPostulanteController@store')->middleware('can:dashboard_postulante')->name('dashboard_postulante.store');
 //Crud usuarios
 Route::resource('usuarios', 'UsuarioController')->middleware('can:dashboard_admin')->names([
     'index' => 'usuarios.index',

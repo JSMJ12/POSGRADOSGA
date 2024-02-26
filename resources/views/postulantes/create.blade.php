@@ -28,8 +28,13 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                
+
                                 <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="imagen">Foto:</label>
+                                        <input type="file" name="imagen" class="form-control-file">
+                                    </div>
+                                    
                                     <div class="form-group">
                                         <label for="dni">Cédula / Pasaporte</label>
                                         <input type="text" name="dni" class="form-control" required>

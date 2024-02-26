@@ -297,21 +297,21 @@ return [
             'icon' => 'fas fa-user',
             'topnav_right' => true,
             'id' => 'editarPerfilLink', // Agregamos un ID para identificarlo
-            'can' => ['dashboard_docente', 'dashboard_alumno',  'dashboard_secretario']
+            'can' => ['dashboard_docente', 'dashboard_alumno',  'dashboard_secretario',  'dashboard_postulante']
         ],
         [
             'text' => 'Inicio',
             'url' => '/inicio',
             'icon' => 'fas fa-home',
             'topnav_right' => true,
-            'can' => ['dashboard_docente', 'dashboard_alumno',  'dashboard_secretario']
+            'can' => ['dashboard_docente', 'dashboard_alumno',  'dashboard_secretario', 'dashboard_postulante']
         ],
         [
             'text' => 'Buzon',
             'route'  => 'messages.index',
             'icon' => 'fas fa-envelope',
             'topnav_right' => true,
-            'can' => ['dashboard_docente', 'dashboard_alumno',  'dashboard_secretario']
+            'can' => ['dashboard_docente', 'dashboard_alumno',  'dashboard_secretario', 'dashboard_postulante']
         ],
         
         [
@@ -327,6 +327,13 @@ return [
         
         
         ['header' => 'Administracion', 'can' => 'dashboard_admin'],
+        ['header' => 'Postulación', 'can' => 'dashboard_postulante'],
+        [
+            'text' => 'Documentación',
+            'route'  => 'dashboard_postulante',
+            'icon' => 'far fa-fw fa-file-alt',
+            'can' => 'dashboard_postulante'
+        ],
         [
             'text' => 'Usuarios',
             'route'  => 'usuarios.index',

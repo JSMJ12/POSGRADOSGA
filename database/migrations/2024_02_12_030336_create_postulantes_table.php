@@ -41,10 +41,11 @@ class CreatePostulantesTable extends Migration
             $table->string('nivel_formacion_madre')->nullable();
             $table->string('origen_recursos_estudios')->nullable();
             $table->string('imagen')->nullable(); 
-            $table->string('pdf_cedula'); 
-            $table->string('pdf_papelvotacion'); 
-            $table->string('pdf_titulouniversidad'); 
+            $table->string('pdf_cedula')->nullable(); ; 
+            $table->string('pdf_papelvotacion')->nullable(); ; 
+            $table->string('pdf_titulouniversidad')->nullable(); ; 
             $table->string('pdf_conadis')->nullable(); 
+            $table->string('pdf_hojavida')->nullable(); 
             $table->foreignId('maestria_id')->constrained('maestrias')->onDelete('cascade');
             $table->timestamps();
         });
